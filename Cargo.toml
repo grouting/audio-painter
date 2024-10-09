@@ -2,7 +2,7 @@
 name = "audio_painter"
 version = "0.1.0"
 edition = "2021"
-licence = "MIT"
+license = "MIT"
 description = "make audio out of other audio"
 
 [dependencies]
