@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'audio_painter'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=audio_painter",
+                    "--package=audio_painter"
+                ],
+                "filter": {
+                    "name": "audio_painter",
+                    "kind": "bin"
+                }
+            },
+            "args": ["~/Downloads/samples/out/break.wav ~/Downloads/samples/out/chilcot.wav ~/Downloads/samples/out/out.wav"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'audio_painter'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=audio_painter",
+                    "--package=audio_painter"
+                ],
+                "filter": {
+                    "name": "audio_painter",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
