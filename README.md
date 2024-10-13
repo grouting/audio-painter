@@ -7,6 +7,8 @@ This program takes two audio files as input; a "target" and "paint". The target 
 $ audio_painter -t <target> -p <paint>
 ```
 
+This tool works best with very rhythmic targets; it will work reasonably well with a break, but if you are looking for something melodic you will either have to reduce the target chunk size to something tiny or provide an extremely long paint.
+
 ### Additional options
 - `-o` specify the path for the resulting .wav file (defaults to `./out.wav`)
 - `-c` specify the size of the chunks that the target audio should be split into (defaults to 500 samples)
