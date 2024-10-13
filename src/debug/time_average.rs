@@ -1,9 +1,9 @@
-use std::time::Duration;
 use crate::debug::Stopwatch;
+use std::time::Duration;
 
 pub struct TimeAverage {
 	durations: Vec<f32>, // in seconds,
-	current_stopwatch: Option<Stopwatch>
+	current_stopwatch: Option<Stopwatch>,
 }
 
 impl TimeAverage {
@@ -33,4 +33,3 @@ impl TimeAverage {
 		sum / self.durations.len() as f32
 	}
 }
-

@@ -7,7 +7,7 @@ pub struct Stopwatch {
 impl Stopwatch {
 	pub fn start() -> Self {
 		Self {
-			start: SystemTime::now()
+			start: SystemTime::now(),
 		}
 	}
 

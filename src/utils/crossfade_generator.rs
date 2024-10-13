@@ -1,22 +1,27 @@
 use crate::utils::SampleSpan;
 
-pub fn generate_fades(samples: &[i16], clip_range: &SampleSpan, crossfade_length: usize) -> (Vec<i16>, Vec<i16>) {
-	// If the intended leading crossfade exceeds the bounds of the samples provided, 
+pub fn generate_fades(
+	samples: &[i16],
+	clip_range: &SampleSpan,
+	crossfade_length: usize,
+) -> (Vec<i16>, Vec<i16>) {
+	// If the intended leading crossfade exceeds the bounds of the samples provided,
 	// snap to the closest available sample (0)
-	let head_position: usize = if let (position, false) = clip_range.start().overflowing_sub(crossfade_length) {
-		position
-	} else {
-		0
-	};
+	let head_position: usize =
+		if let (position, false) = clip_range.start().overflowing_sub(crossfade_length) {
+			position
+		} else {
+			0
+		};
 
-	// If the intended closing crossfade exceeds the bounds of the samples provided, 
+	// If the intended closing crossfade exceeds the bounds of the samples provided,
 	// there's no more samples to choose from, so the tail is 0 in length
 	let tail_length: usize = if (clip_range.end() + crossfade_length) < samples.len() {
 		crossfade_length
 	} else {
 		0
 	};
-	
+
 	let head_range = SampleSpan::new(head_position, clip_range.start() - head_position).range();
 	let tail_range = SampleSpan::new(clip_range.end(), tail_length).range();
 

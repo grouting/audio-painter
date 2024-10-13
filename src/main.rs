@@ -1,15 +1,16 @@
-mod steps;
 mod debug;
+mod steps;
 mod utils;
 
-use std::path::PathBuf;
-use clap::{error::{Error, Result}, CommandFactory, Parser};
 use crate::steps::{make_chunk_matches, render};
-use crate::utils::{get_number, get_wav_reader, normalize_if_required, verify_file_extension, IntoMutSamplesVec};
+use clap::{
+	error::{Error, Result},
+	CommandFactory, Parser,
+};
+use std::path::PathBuf;
 
 // TODO: in order of importance:
 // 2. dynamic chunking stuff
-// 3. the other non i16 formats
 // 4. option for gradient descent for search jump
 // overwriting prevention
 
@@ -30,7 +31,6 @@ struct Cli {
 
 	// /// Split the target into chunks of variable length, using shorter pieces for more interesting parts
 	// variable_chunking: Option<bool>,
-
 	/// When splitting the target clip, what size should the chunks be?
 	#[arg[short = 'c', default_value = "500"]]
 	chunk_size: usize,
@@ -53,22 +53,42 @@ fn execute() -> Result<(), Error> {
 	let cli = Cli::parse();
 	let mut command = Cli::command();
 
-	let target_path = verify_file_extension(cli.target, &mut command)?;
-	let paint_path = verify_file_extension(cli.paint, &mut command)?;
+	let target_path = utils::verify_file_extension(&cli.target, &mut command)?;
+	let paint_path = utils::verify_file_extension(&cli.paint, &mut command)?;
 
-	let chunk_size = get_number(cli.chunk_size, 200, 10000, "chunk_size", &mut command)?;
-	let dry_wet_mix = get_number(cli.dry_wet_mix, 0., 1., "dry_wet_mix", &mut command)?;
-	let search_jump = get_number(cli.search_jump, 1, 1000, "search_jump", &mut command)?;
+	let chunk_size = utils::get_number(cli.chunk_size, 200, 10000, "chunk_size", &mut command)?;
+	let dry_wet_mix = utils::get_number(cli.dry_wet_mix, 0., 1., "dry_wet_mix", &mut command)?;
+	let search_jump = utils::get_number(cli.search_jump, 1, 1000, "search_jump", &mut command)?;
 
-	let mut target_reader = get_wav_reader(target_path, &mut command)?;
-	let mut paint_reader = get_wav_reader(paint_path, &mut command)?;
+	let target_reader = utils::get_wav_reader(target_path, &mut command)?;
+	let paint_reader = utils::get_wav_reader(paint_path, &mut command)?;
 
-	let target_samples = normalize_if_required(target_reader.collect_samples(), cli.normalize);
-	let paint_samples = normalize_if_required(paint_reader.collect_samples(), cli.normalize);
+	let target_spec = target_reader.spec();
+	let paint_spec = paint_reader.spec();
 
-	let chunk_matches = make_chunk_matches(&target_samples, &paint_samples, chunk_size, search_jump)?;
+	utils::throw_if_sample_rate_mismatch((&target_spec, &paint_spec), &mut command)?;
+	utils::warn_if_flattening_required((&target_spec, &paint_spec));
 
-	render(&chunk_matches, &target_samples, &paint_samples, chunk_size, cli.output, dry_wet_mix)?;
+	let target_samples = utils::get_samples(target_reader, &cli, &target_spec)?;
+	let paint_samples = utils::get_samples(paint_reader, &cli, &paint_spec)?;
+
+	let chunk_matches = make_chunk_matches(
+		&target_samples,
+		&paint_samples,
+		chunk_size,
+		search_jump,
+		target_spec.sample_rate,
+	)?;
+
+	render(
+		&chunk_matches,
+		&target_samples,
+		&paint_samples,
+		chunk_size,
+		&cli.output,
+		dry_wet_mix,
+		target_spec.sample_rate,
+	)?;
 
 	Ok(())
 }
