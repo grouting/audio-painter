@@ -10,9 +10,10 @@ use clap::{
 use std::path::PathBuf;
 
 // TODO: in order of importance:
-// 2. dynamic chunking stuff
-// 4. option for gradient descent for search jump
+// dynamic chunking stuff
+// threading
 // overwriting prevention
+// option for gradient descent for search jump
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]

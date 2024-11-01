@@ -1,7 +1,7 @@
+use crate::steps::tidy;
 use crate::utils::{generate_fades, SampleSpan};
 use clap::error::Error;
 use std::path::PathBuf;
-use crate::steps::tidy;
 
 pub fn render(
 	chunk_matches: &Vec<SampleSpan>,
@@ -71,7 +71,9 @@ pub fn render(
 
 fn stamp(out: &mut Vec<i16>, input: &[i16], at: usize) {
 	for i in 0..input.len() {
-		out[at + i] += input[i];
+		if at + i < out.len() {
+			out[at + i] += input[i];
+		}
 	}
 }
 

@@ -137,6 +137,6 @@ pub fn div_ceil(a: usize, b: usize) -> usize {
 }
 
 /// Divides the two operands, returning the answer rounded to the lowest nearest integer
-pub fn div_floor(a: usize, b: usize) -> usize {
+pub fn _div_floor(a: usize, b: usize) -> usize {
 	(a as f32 / b as f32).floor() as usize
 }
